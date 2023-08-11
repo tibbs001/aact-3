@@ -5,42 +5,10 @@ MAINTAINER Jim Wood <jimwood@duke.edu>
 FROM base as base-amd64
 RUN apt-get clean && apt-get update \
  && apt-get install -qq -y --no-install-recommends unzip
-# Oracle
-COPY instantclient-basic-linux.x64-18.5.0.0.0dbru.zip ./
-COPY instantclient-sdk-linux.x64-18.5.0.0.0dbru.zip ./
-RUN unzip instantclient-basic-linux.x64-18.5.0.0.0dbru.zip && \
-    unzip instantclient-sdk-linux.x64-18.5.0.0.0dbru.zip && \
-  mv instantclient_18_5/ /usr/lib/ && \
-  rm instantclient-basic-linux.x64-18.5.0.0.0dbru.zip && \
-  ln /usr/lib/instantclient_18_5/libclntsh.so.18.1 /usr/lib/libclntsh.so && \
-  ln /usr/lib/instantclient_18_5/libocci.so.18.1 /usr/lib/libocci.so && \
-  ln /usr/lib/instantclient_18_5/libociei.so /usr/lib/libociei.so && \
-  ln /usr/lib/instantclient_18_5/libnnz18.so /usr/lib/libnnz18.so
-ENV ORACLE_BASE=/usr/lib/instantclient_18_5 \
-    LD_LIBRARY_PATH=/usr/lib/instantclient_18_5 \
-    TNS_ADMIN=/usr/lib/instantclient_18_5 \
-    ORACLE_HOME=/usr/lib/instantclient_18_5 \
-    NLS_LANG=AMERICAN_AMERICA.UTF8
-
+j
 FROM base as base-arm64
 RUN apt-get clean && apt-get update \
  && apt-get install -qq -y --no-install-recommends unzip
-# Oracle
-COPY instantclient-basic-linux.arm64-19.10.0.0.0dbru.zip ./
-COPY instantclient-sdk-linux.arm64-19.10.0.0.0dbru.zip ./
-RUN unzip instantclient-basic-linux.arm64-19.10.0.0.0dbru.zip && \
-    unzip instantclient-sdk-linux.arm64-19.10.0.0.0dbru.zip && \
-  mv instantclient_19_10/ /usr/lib/ && \
-  rm instantclient-basic-linux.arm64-19.10.0.0.0dbru.zip && \
-  ln /usr/lib/instantclient_19_10/libclntsh.so.19.1 /usr/lib/libclntsh.so && \
-  ln /usr/lib/instantclient_19_10/libocci.so.19.1 /usr/lib/libocci.so && \
-  ln /usr/lib/instantclient_19_10/libociei.so /usr/lib/libociei.so && \
-  ln /usr/lib/instantclient_19_10/libnnz19.so /usr/lib/libnnz19.so
-ENV ORACLE_BASE=/usr/lib/instantclient_19_10 \
-    LD_LIBRARY_PATH=/usr/lib/instantclient_19_10 \
-    TNS_ADMIN=/usr/lib/instantclient_19_10 \
-    ORACLE_HOME=/usr/lib/instantclient_19_10 \
-    NLS_LANG=AMERICAN_AMERICA.UTF8
 
 FROM base-${TARGETARCH} as deps
 RUN apt-get update \
@@ -62,7 +30,12 @@ RUN apt-get update \
     libsqlite3-dev \
     freetds-dev \
     python \
-    postgresql-client postgresql-client-common libpq-dev
+    postgresql-client \
+    postgresql-client-common \
+    libpq-dev
+
+RUN apt-get install -y postgresql-client postgresql-client-common libpq-dev
+
 
 # Set Timezone
 RUN ln -sf /usr/share/zoneinfo/America/New_York /etc/localtime

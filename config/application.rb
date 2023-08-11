@@ -8,17 +8,9 @@ Bundler.require(*Rails.groups)
 
 Dotenv::Railtie.load
 
-# Load vault secrets
-require_relative "../lib/load_vault_secrets"
-
 # Now that we inject all configs via environment, trap RAILS_ENV=test and set DATABASE_URL to value of TEST_DATABASE_URL
 # Set after vault loader but before validate environment
 ENV['DATABASE_URL'] = ENV['TEST_DATABASE_URL'] if Rails.env.test?
-
-# Validate environment
-# Load after vault loader
-require_relative "../lib/validate_environment"
-
 
 module Aact
   class Application < Rails::Application

@@ -43,16 +43,13 @@ module Util
     def dump_database
       dump_file_location = fm.pg_dump_file
       FileUtils.rm_f(dump_file_location)
-      config = Study.connection_config
-      host = config[:host]
-      port = config[:port]
-      username = config[:username]
-      database = config[:database]
-      host ||= 'localhost'
-      port ||= 5432
+      host = ENV['POSTGRES_HOST'] || 'db'
+      port = ENV['POSTGRES_PORT'] || '5432'
+      username = ENV['POSTGRES_USERNAME'] || 'postgres'
+      database = ENV['DATABASE_NAME'] || 'aact_2'
 
       cmd = "
-        pg_dump  -v -h #{host} -p #{port} -U #{username} \
+        pg_dump -v -h #{host} -p #{port} -U #{username} \
         --clean --no-owner -b -c -C -Fc \
         --exclude-table ar_internal_metadata \
         --exclude-table schema_migrations \
@@ -74,12 +71,11 @@ module Util
     # 4. verify the study count (permissions are not granted again to prevent bad data from being used)
     # 5. grant connection permissions again
     def restore_database(connection, filename, schema = 'public')
-      #config = connection.instance_variable_get('@config')
-      host = 'db'
-      port = '5432'
-      username = 'postgres'
-      database = 'aact_2'
-      password = 'aact_2_password'
+      host = ENV['POSTGRES_HOST'] || 'db'
+      port = ENV['POSTGRES_PORT'] || '5432'
+      username = ENV['POSTGRES_USERNAME'] || 'postgres'
+      password = ENV['POSTGRES_PASSWORD']
+      database = ENV['DATABASE_NAME'] || 'aact_2'
 
       # prevent new connections and drop current connections
       ActiveRecord::Base.connection.execute("ALTER DATABASE #{database} CONNECTION LIMIT 0;")
