@@ -1,0 +1,53 @@
+include:
+  - project: 'essweb/gitlab-ci-base'
+    ref: main
+    file: '/ci-base-template.yml'
+
+#Build an application image
+build_application_image:
+  variables:
+    BASE_IMAGE_TAG: "rails7"
+  only:
+    - acceptance #Add your branch
+  environment:
+    name: development #Add your environment here
+  extends:
+    - .build_image_from_base
+
+#Deploy an application image
+deploy_application_image:
+  only:
+    - acceptance #Add your branch
+  environment:
+    name: development #Add your environment here
+  extends:
+    - .deploy_image
+
+#Deploy a shib/apache image
+# deploy_shib_apache_image_test:
+#   variables:
+#     VAULT_SHIB_SECRET_PATH: "path to your vault shib cert and key" (required)
+#     VAULT_ROLE: "role to access shib cert and key (DevOps can help you there)" (required)
+#     ROUTE_URL: "URL for your shib SP" (required)
+#     CONTAINER_PORT: "port on which your application is running at" (required)
+#     IP_WHITELIST: "IP whitelisting if you need that for shib SP" (optional, by default accessible from everywhere)
+#   only:
+#     - acceptance #Add your branch
+#   environment:
+#     name: development #Add your environment here
+#   extends:
+#     - .deploy_shib_apache
+
+#Deploy a maintenance image
+# deploy_maintenance_image:
+#   only:
+#     - acceptance #Add your branch
+#   extends:
+#     - .deploy_maintenance_image
+
+#Deploy an acme image
+# deploy_acme_image:
+#   only:
+#     - acceptance #Add your branch
+#   extends:
+#     - .deploy_acme

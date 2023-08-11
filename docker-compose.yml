@@ -1,0 +1,33 @@
+version: '3.7'
+services:
+  web:
+    image: gitlab-registry.oit.duke.edu/essweb/docker/rails-7/deps
+    command: /bin/sh -c "rm -rf tmp/* && RAILS_ENV=development bundle exec rails s -b 0.0.0.0"
+    entrypoint: /app/docker-entrypoint-dev.sh
+    env_file:
+      - .env
+    volumes:
+      - bundle:/bundle
+      - .:/app
+    ports:
+      - "3000:3000"
+  db:
+    image: postgres:13
+    ports:
+        - '5432:5432'
+    volumes:
+        - postgres-data:/var/lib/postgresql/data
+    environment:
+        POSTGRES_PASSWORD: aact_2_password
+  testdb:
+    image: postgres:13
+    ports:
+        - '5433:5432'
+    volumes:
+        - postgres-test-data:/var/lib/postgresql/data
+    environment:
+        POSTGRES_PASSWORD: aact_2_password
+volumes:
+  bundle:
+  postgres-data:
+  postgres-test-data:
