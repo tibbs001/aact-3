@@ -194,9 +194,10 @@ module Util
     end
 
     def update_study(nct_id)
-      begin
+      #begin
         stime = Time.now
-        record = StudyJsonRecord.find_by(nct_id: nct_id) || StudyJsonRecord.create(nct_id: nct_id, content: {})
+        #record = StudyJsonRecord.find_by(nct_id: nct_id) || StudyJsonRecord.create(nct_id: nct_id, content: {})
+        record = Support::StudyJsonRecord.find_by(nct_id: nct_id) || Support::StudyJsonRecord.create(nct_id: nct_id, content: {})
         changed = record.update_from_api unless ENV['STUDY_SECTIONS']
 
         if record.blank? || record.content.blank?
@@ -204,9 +205,9 @@ module Util
         else
           record.create_or_update_study
         end
-      rescue => e
-        Airbrake.notify(e)
-      end
+      #rescue => e
+      #  Airbrake.notify(e)
+      #end
       Time.now - stime
     end
 

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require 'uri'
-require 'axlsx'
+#require 'axlsx'
 
 # This model stores the nct_id for a search using the ctgov api
 class SearchResult < ApplicationRecord

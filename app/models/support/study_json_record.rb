@@ -3,8 +3,9 @@ require 'fileutils'
 require 'logger'
 require 'csv'
 #include ActionView::Helpers::DateHelper
+module Support
 class StudyJsonRecord < Support::SupportBase
-  self.table_name = 'support.study_json_records'
+  self.table_name='support.study_json_records'
 
   # 1. remove all study data if study exists
   # 2. import all the study data
@@ -23,7 +24,7 @@ class StudyJsonRecord < Support::SupportBase
 
   # Make an API call to update the json
   def update_from_api
-    url = "https://clinicaltrials.gov/api/query/full_studies?expr=AREA%5BNCTId%5D#{nct_id}&min_rnk=1&max_rnk=&fmt=json"
+    url = "https://classic.clinicaltrials.gov/api/query/full_studies?expr=AREA%5BNCTId%5D#{nct_id}&min_rnk=1&max_rnk=&fmt=json"
     attempts = 0
     data = nil
     response = nil
@@ -40,12 +41,13 @@ class StudyJsonRecord < Support::SupportBase
       return false if attempts > 5
       retry
     end
-    data = data.dig('FullStudiesResponse', 'FullStudies').first
+    result = data.dig('FullStudiesResponse', 'FullStudies').first
     begin
-      if data
-        self.content = data
+      if result
+        self.content = result
+        self.save!
         return false unless changed?
-        return update content: data, download_date: Time.now
+        return update content: result, download_date: Time.now
       end
     rescue => e
       Airbrake.notify(e)
@@ -1582,4 +1584,5 @@ class StudyJsonRecord < Support::SupportBase
     hash_array.each{ |h| h[key] = value }
     hash_array
   end
+end
 end
