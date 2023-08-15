@@ -13,6 +13,7 @@ gem 'airbrake'
 gem 'roo'
 gem 'caxlsx'
 gem 'caxlsx_rails'
+gem 'activerecord-import'
 
 # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
 gem "rails", "~> 7.0.5"

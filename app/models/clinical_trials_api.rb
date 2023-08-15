@@ -46,9 +46,10 @@ class ClinicalTrialsApi
     items = []
     while items.length < found
       t = Time.now
-      url = "https://clinicaltrials.gov/api/query/study_fields?fields=NCTId%2CStudyFirstPostDate%2CLastUpdatePostDate&min_rnk=#{offset}&max_rnk=#{offset + 999}&fmt=json"
+      url = "https://classic.clinicaltrials.gov/api/query/study_fields?fields=NCTId%2CStudyFirstPostDate%2CLastUpdatePostDate&min_rnk=#{offset}&max_rnk=#{offset + 999}&fmt=json"
       # puts url
       attempts = 0
+      puts "attempt #{attempts}"
       begin
         next if attempts > 3
         json = JSON.parse(Faraday.get(url).body)
